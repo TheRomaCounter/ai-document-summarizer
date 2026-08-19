@@ -1,43 +1,26 @@
 # AI Document Summarizer API
 
-A high-performance, asynchronous microservice built with Python to handle fast document uploads and automated, infrastructure-independent text summarization using local NLP algorithms.
+An asynchronous microservice application built with Python to handle fast document uploads and automated text summarization using local NLP algorithms.
 
 ## 🛠️ Tech Stack
-
-* **FastAPI** — High-performance asynchronous Web API for uploading text files and managing processing endpoints.
-* **Aiofiles & Python-Multipart** — Non-blocking file I/O operations to handle heavy multi-part document chunk streams.
+* **FastAPI** — High-performance asynchronous Web API for uploading text records.
+* **Aiofiles & Python-Multipart** — Non-blocking I/O integration for seamless file upload streaming.
 * **Sumy (LSA Engine)** — Local Latent Semantic Analysis mathematical model for extractive text summarization.
 * **NLTK & NumPy** — Specialized linguistic and matrix computation libraries for sentence tokenization and analytical data parsing.
 
-## 📐 Architecture Overview
+## 📐 Architecture & Shared Volumes Overview
 
-```text
-       [ User ]
-          │
-     POST /upload
-          ▼
-   ┌──────────────┐
-   │   FastAPI    │
-   │   Web API    │
-   └──────┬───────┘
-          │
-     Saves file
-          ▼
-   ┌──────────────┐
-   │ Local Storage│◄────────┐
-   │  (/storage)  │         │
-   └──────────────┘    Reads file
-          │                 │
-    POST /summarize         │
-          ▼                 │
-   ┌──────────────┐         │
-   │  AI Service  ├─────────┘
-   │ (Local LSA)  │
-   └──────┬───────┘
-          │
-   Returns summary
-          ▼
-   [ JSON Response ]
+```mermaid
+graph TD
+    User -->|POST /upload| FastAPI[FastAPI Web API]
+    FastAPI -->|Saves raw text| LocalStorage[(Local Storage /storage)]
+    FastAPI -->|Returns success status| User
+    User -->|POST /summarize| FastAPI
+    FastAPI -->|Reads file| LocalStorage
+    FastAPI -->|Triggers local NLP logic| AIService[AI Service Local LSA]
+    LocalStorage -->|Provides text content| AIService
+    AIService -->|Generates key sentences| FastAPI
+    FastAPI -->|Returns summary| User
 ```
 
 ## 📂 Project Structure
@@ -54,11 +37,11 @@ doc_summarizer/
 ## 🚀 Getting Started
 
 ### Prerequisites
-* Python 3.10 or higher installed on your local operating system.
+Ensure **Python 3.10** or higher is running on your machine.
 
-### Installation
+### Installation & Launch
 
-1. Clone the repository and navigate to the root directory:
+1. Navigate to the project folder:
    ```bash
    cd doc_summarizer
    ```
@@ -80,4 +63,10 @@ doc_summarizer/
    uvicorn main:app --reload
    ```
 
-5. Explore the live interactive API engine interface at: http://127.0.0
+Once deployed, the systems will be available at:
+* 🌐 **Interactive Web Documentation (Swagger UI)**: http://localhost:8000/docs
+
+## 🧪 API Specifications
+
+* **`POST /upload`** — Validates incoming document attachments (.txt), pipes them directly into the secure local storage sector, and prepares them for further extraction.
+* **`POST /summarize`** — Performs structural scans against the requested local text asset, runs mathematical sentence matrices, and renders the generated abstract summary metadata.
